@@ -1,66 +1,69 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sistema CRUD Factura
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Descripción del sistema
+Este proyecto es un sistema CRUD para la gestión de facturas, clientes y productos, diseñado para facilitar el manejo eficiente de la información comercial. Además, incluye pruebas automatizadas para asegurar la correcta funcionalidad de los módulos principales, garantizando así la calidad y estabilidad del sistema a lo largo del tiempo.
 
-## About Laravel
+## Requisitos para la instalación
+Antes de instalar el sistema, asegúrate de contar con los siguientes componentes instalados y configurados en tu entorno:
+- PHP (versión 8.0 o superior recomendada)
+- Composer (para gestionar dependencias de PHP)
+- Servidor web Apache o similar
+- Base de datos MySQL o MariaDB
+- Git (para clonar el repositorio y control de versiones)
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Cómo instalar el sistema
+1. Clona el repositorio a tu máquina local usando el siguiente comando:
+git clone https://github.com/Cdavidjara/Crudfactura.git
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+2. Ingresa a la carpeta del proyecto:
+cd Crudfactura
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+3. Instala las dependencias necesarias con Composer:
+composer install
 
-## Learning Laravel
+4. Configura el archivo `.env` copiando el archivo `.env.example` y ajustando los datos de conexión a la base de datos y otros parámetros necesarios:
+cp .env.example .env
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+5. Genera la clave de la aplicación:
+php artisan key:generate
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+6. Ejecuta las migraciones para crear las tablas en la base de datos:
+php artisan migrate
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Base de datos
+El proyecto utiliza una base de datos llamada `pruebas_factura`. Para facilitar la configuración, se incluye un respaldo SQL ubicado en:
+database/backup/pruebas_factura.sql
 
-## Laravel Sponsors
+Puedes importar este archivo en tu gestor de base de datos para tener los datos iniciales y la estructura lista para usar.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+## Cómo ejecutar el sistema
+Para iniciar el servidor local y probar la aplicación, ejecuta:
+php artisan serve
 
-### Premium Partners
+Editar
+Luego, abre tu navegador y visita la URL que aparecerá en consola, típicamente:
+http://127.0.0.1:8000
+### Acceso a las secciones del sistema
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+Una vez iniciado el sistema, puedes acceder a las diferentes tablas (módulos) del sistema utilizando las siguientes rutas en tu navegador:
 
-## Contributing
+- **Clientes:**  
+http://127.0.0.1:8000/clientes
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- **Productos:**  
+http://127.0.0.1:8000/productos
 
-## Code of Conduct
+- **Facturas:**  
+http://127.0.0.1:8000/facturas
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Cada ruta te llevará a una interfaz donde podrás crear, visualizar, editar y eliminar registros según el módulo correspondiente.
 
-## Security Vulnerabilities
+## Cómo ejecutar las pruebas automatizadas
+Este proyecto incluye tests automatizados para verificar el correcto funcionamiento de sus componentes. Para correr las pruebas, utiliza el siguiente comando en la raíz del proyecto:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+php artisan test
+Esto ejecutará todas las pruebas definidas y mostrará un resumen con los resultados, ayudando a garantizar la estabilidad y calidad del sistema durante el desarrollo.
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
