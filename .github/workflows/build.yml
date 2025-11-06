@@ -21,16 +21,13 @@ jobs:
           node-version: 18
 
       - name: Install SonarScanner CLI via npm
+        shell: cmd
         run: npm install -g sonarqube-scanner
 
-      - name: Run SonarQube Analysis
+      - name: Run SonarQube Analysis (CMD)
+        shell: cmd
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: >
-          sonar-scanner
-          -Dsonar.projectKey=Avianca-EMSA
-          -Dsonar.projectName="Avianca EMSA"
-          -Dsonar.sources=.
-          -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
-          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        run: |
+          sonar-scanner -Dsonar.projectKey=Avianca-EMSA -Dsonar.projectName="Avianca EMSA" -Dsonar.sources=. -Dsonar.host.url=%SONAR_HOST_URL% -Dsonar.login=%SONAR_TOKEN%
