@@ -8,7 +8,7 @@ on:
 jobs:
   build:
     name: Build and analyze
-    runs-on: windows-latest  # usamos runner en la nube, evita el error EBUSY
+    runs-on: windows-latest  # Usa el runner en la nube (más estable que el local)
 
     steps:
       # 🧩 Paso 1: Clonar el repositorio sin limpiar archivos temporales
@@ -16,9 +16,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          clean: false  # evita el borrado del directorio temporal
+          clean: false  # evita error EBUSY en Windows
 
-      # 🧩 Paso 2: Instalar JDK 17
+      # 🧩 Paso 2: Configurar JDK 17
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -47,6 +47,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
+          cd Crudfactura-main
           mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar ^
             -Dsonar.projectKey=Avianca-EMSA ^
             -Dsonar.projectName='Avianca EMSA' ^
