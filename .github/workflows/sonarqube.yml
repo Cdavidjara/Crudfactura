@@ -8,24 +8,24 @@ on:
 jobs:
   build:
     name: Build and analyze
-    runs-on: windows-latest  # Usa el runner en la nube (más estable que el local)
+    runs-on: windows-latest  # usa entorno GitHub Actions en Windows
 
     steps:
-      # 🧩 Paso 1: Clonar el repositorio sin limpiar archivos temporales
+      # 🧩 Clona el repositorio sin limpiar archivos temporales (evita EBUSY)
       - name: Checkout repository safely
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          clean: false  # evita error EBUSY en Windows
+          clean: false
 
-      # 🧩 Paso 2: Configurar JDK 17
+      # 🧩 Instala JDK 17
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: 17
           distribution: 'zulu'
 
-      # 🧩 Paso 3: Cache de SonarQube
+      # 🧩 Cache SonarQube
       - name: Cache SonarQube packages
         uses: actions/cache@v4
         with:
@@ -33,7 +33,7 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
-      # 🧩 Paso 4: Cache de Maven
+      # 🧩 Cache Maven
       - name: Cache Maven packages
         uses: actions/cache@v4
         with:
@@ -41,13 +41,12 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      # 🧩 Paso 5: Compilar y analizar con SonarQube
+      # 🧩 Compila y analiza con SonarQube
       - name: Build and analyze with SonarQube
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
-          cd Crudfactura-main
           mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar ^
             -Dsonar.projectKey=Avianca-EMSA ^
             -Dsonar.projectName='Avianca EMSA' ^
