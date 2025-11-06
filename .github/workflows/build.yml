@@ -8,31 +8,34 @@ on:
 jobs:
   sonarqube:
     name: Run SonarQube Scanner (Local)
-    runs-on: self-hosted  # 👈 usa tu runner local (el que ya está escuchando)
+    runs-on: self-hosted  # usa tu runner local en Windows
 
     steps:
-      # 1️⃣ Clonar el repositorio
-      - name: Checkout repository
+      # 🧩 1️⃣ Clonar el repositorio sin limpiar archivos (soluciona EBUSY)
+      - name: Checkout repository safely
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          clean: false
+          clean: false  # evita error EBUSY por bloqueo de archivos temporales
 
-      # 2️⃣ Descargar e instalar SonarQube Scanner CLI
+      # 🧩 2️⃣ Instalar el SonarScanner CLI en Windows
       - name: Install SonarQube Scanner CLI
         shell: powershell
         run: |
+          Write-Host "📦 Descargando SonarScanner CLI..."
           Invoke-WebRequest -Uri "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-7.3.0.5189-windows-x64.zip" -OutFile "sonar-scanner.zip"
           Expand-Archive sonar-scanner.zip -DestinationPath "C:\sonar-scanner"
           echo "C:\sonar-scanner\sonar-scanner-7.3.0.5189-windows-x64\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+          Write-Host "✅ SonarScanner instalado correctamente."
 
-      # 3️⃣ Ejecutar el análisis en tu SonarQube local
+      # 🧩 3️⃣ Ejecutar el análisis con tu SonarQube local
       - name: Run SonarQube analysis
         shell: powershell
         env:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
+          Write-Host "🚀 Iniciando análisis con SonarQube local..."
           sonar-scanner `
             -Dsonar.projectKey=Avianca-EMSA `
             -Dsonar.projectName="Avianca EMSA" `
@@ -40,3 +43,4 @@ jobs:
             -Dsonar.host.url=$env:SONAR_HOST_URL `
             -Dsonar.token=$env:SONAR_TOKEN `
             -Dsonar.sourceEncoding=UTF-8
+          Write-Host "✅ Análisis finalizado."
