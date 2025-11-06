@@ -1,0 +1,32 @@
+name: Build and Analyze
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Analyze project with SonarQube
+    runs-on: windows-latest
+
+    steps:
+      # 1️⃣ Clona el repositorio
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Importante para un análisis más completo
+
+      # 2️⃣ Ejecuta el análisis con el escáner de SonarQube
+      - name: Run SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+      # 3️⃣ (Opcional) Falla si la calidad no cumple
+      # - name: Check Quality Gate
+      #   uses: SonarSource/sonarqube-quality-gate-action@v1
+      #   timeout-minutes: 5
+      #   env:
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
