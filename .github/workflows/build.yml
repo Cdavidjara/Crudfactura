@@ -1,4 +1,4 @@
-name: SonarQube Local Analysis
+name: SonarQube Local Analysis (Windows Safe)
 
 on:
   push:
@@ -8,34 +8,46 @@ on:
 jobs:
   sonarqube:
     name: Run SonarQube Scanner (Local)
-    runs-on: self-hosted  # usa tu runner local en Windows
+    runs-on: self-hosted  # tu runner local
+
+    defaults:
+      run:
+        working-directory: ${{ github.workspace }}  # evita conflicto de ruta
 
     steps:
-      # 🧩 1️⃣ Clonar el repositorio sin limpiar archivos (soluciona EBUSY)
-      - name: Checkout repository safely
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          clean: false  # evita error EBUSY por bloqueo de archivos temporales
-
-      # 🧩 2️⃣ Instalar el SonarScanner CLI en Windows
-      - name: Install SonarQube Scanner CLI
-        shell: powershell
+      # ✅ Paso 1: Clonar el repositorio sin limpiar nada
+      - name: Safe checkout (no clean)
+        shell: pwsh
         run: |
-          Write-Host "📦 Descargando SonarScanner CLI..."
-          Invoke-WebRequest -Uri "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-7.3.0.5189-windows-x64.zip" -OutFile "sonar-scanner.zip"
-          Expand-Archive sonar-scanner.zip -DestinationPath "C:\sonar-scanner"
+          Write-Host "📂 Clonando repositorio manualmente..."
+          if (Test-Path ".git") {
+            Write-Host "Repositorio ya existe, actualizando..."
+            git fetch origin main
+            git reset --hard origin/main
+          } else {
+            git clone https://github.com/Cdavidjara/Crudfactura.git .
+          }
+          git status
+
+      # ✅ Paso 2: Instalar SonarScanner CLI
+      - name: Install SonarQube Scanner CLI
+        shell: pwsh
+        run: |
+          Write-Host "⬇️ Descargando SonarScanner CLI..."
+          $zipPath = "sonar-scanner.zip"
+          Invoke-WebRequest -Uri "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-7.3.0.5189-windows-x64.zip" -OutFile $zipPath
+          Expand-Archive $zipPath -DestinationPath "C:\sonar-scanner" -Force
           echo "C:\sonar-scanner\sonar-scanner-7.3.0.5189-windows-x64\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
           Write-Host "✅ SonarScanner instalado correctamente."
 
-      # 🧩 3️⃣ Ejecutar el análisis con tu SonarQube local
+      # ✅ Paso 3: Ejecutar el análisis
       - name: Run SonarQube analysis
-        shell: powershell
+        shell: pwsh
         env:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          Write-Host "🚀 Iniciando análisis con SonarQube local..."
+          Write-Host "🚀 Ejecutando análisis SonarQube..."
           sonar-scanner `
             -Dsonar.projectKey=Avianca-EMSA `
             -Dsonar.projectName="Avianca EMSA" `
@@ -43,4 +55,4 @@ jobs:
             -Dsonar.host.url=$env:SONAR_HOST_URL `
             -Dsonar.token=$env:SONAR_TOKEN `
             -Dsonar.sourceEncoding=UTF-8
-          Write-Host "✅ Análisis finalizado."
+          Write-Host "✅ Análisis completado exitosamente."
