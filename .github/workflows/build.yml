@@ -1,4 +1,4 @@
-name: Build
+name: SonarQube Scan
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build:
+  sonarqube:
     runs-on: windows-latest
 
     steps:
@@ -19,7 +19,7 @@ jobs:
           java-version: 17
           distribution: 'zulu'
 
-      - name: Download SonarQube Scanner
+      - name: Download SonarQube Scanner CLI
         shell: pwsh
         run: |
           Invoke-WebRequest -Uri "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-5.0.1.3006-windows.zip" -OutFile "sonar-scanner.zip"
@@ -39,4 +39,3 @@ jobs:
             -Dsonar.sources=. `
             -Dsonar.sourceEncoding=UTF-8 `
             -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/**,**/*.test.*,**/tests/**,**/target/**
-
