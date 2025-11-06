@@ -20,13 +20,15 @@ jobs:
           distribution: 'zulu'
 
       - name: Download SonarQube Scanner
+        shell: pwsh
         run: |
-          curl -L -o sonar-scanner.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-5.0.1.3006-windows.zip
-          tar -xf sonar-scanner.zip
-          echo "SONAR_SCANNER_HOME=$PWD/sonar-scanner-5.0.1.3006-windows" >> $env:GITHUB_ENV
-          echo "$PWD/sonar-scanner-5.0.1.3006-windows/bin" >> $env:GITHUB_PATH
+          Invoke-WebRequest -Uri "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-5.0.1.3006-windows.zip" -OutFile "sonar-scanner.zip"
+          Expand-Archive -Path "sonar-scanner.zip" -DestinationPath "sonar-scanner"
+          echo "SONAR_SCANNER_HOME=$PWD/sonar-scanner/sonar-scanner-5.0.1.3006-windows" >> $env:GITHUB_ENV
+          echo "$PWD/sonar-scanner/sonar-scanner-5.0.1.3006-windows/bin" >> $env:GITHUB_PATH
 
       - name: Run SonarQube analysis
+        shell: pwsh
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
@@ -37,3 +39,4 @@ jobs:
             -Dsonar.sources=. `
             -Dsonar.sourceEncoding=UTF-8 `
             -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/**,**/*.test.*,**/tests/**,**/target/**
+
