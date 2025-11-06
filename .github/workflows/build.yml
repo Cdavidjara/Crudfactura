@@ -1,4 +1,4 @@
-name: SonarQube Local Analysis (Windows CMD/Powershell)
+name: SonarQube Local Analysis (Windows Stable)
 
 on:
   push:
@@ -8,20 +8,20 @@ on:
 jobs:
   sonarqube:
     name: Run SonarQube Scanner (Local)
-    runs-on: self-hosted  # tu runner local Windows
+    runs-on: self-hosted
 
     defaults:
       run:
         working-directory: ${{ github.workspace }}
 
     steps:
-      # ✅ 1️⃣ Clonar manualmente el repositorio para evitar error EBUSY
-      - name: Safe checkout repository
+      # Paso 1: Clonar el repositorio sin usar checkout
+      - name: Clone repository manually
         shell: powershell
         run: |
-          Write-Host "📂 Clonando repositorio manualmente..."
+          Write-Host "Clonando repositorio manualmente..."
           if (Test-Path ".git") {
-            Write-Host "Repositorio ya existe, actualizando..."
+            Write-Host "Repositorio existente, actualizando..."
             git fetch origin main
             git reset --hard origin/main
           } else {
@@ -29,25 +29,25 @@ jobs:
           }
           git status
 
-      # ✅ 2️⃣ Descargar e instalar SonarScanner CLI
+      # Paso 2: Instalar el SonarScanner CLI
       - name: Install SonarQube Scanner CLI
         shell: powershell
         run: |
-          Write-Host "⬇️ Descargando SonarScanner CLI..."
+          Write-Host "Descargando SonarScanner CLI..."
           $zipPath = "sonar-scanner.zip"
           Invoke-WebRequest -Uri "https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-7.3.0.5189-windows-x64.zip" -OutFile $zipPath
           Expand-Archive -Path $zipPath -DestinationPath "C:\sonar-scanner" -Force
           echo "C:\sonar-scanner\sonar-scanner-7.3.0.5189-windows-x64\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-          Write-Host "✅ SonarScanner instalado correctamente."
+          Write-Host "Instalacion completada."
 
-      # ✅ 3️⃣ Ejecutar análisis con tu SonarQube local
+      # Paso 3: Ejecutar el análisis con SonarQube local
       - name: Run SonarQube analysis
         shell: powershell
         env:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          Write-Host "🚀 Ejecutando análisis SonarQube..."
+          Write-Host "Iniciando analisis con SonarQube..."
           & "C:\sonar-scanner\sonar-scanner-7.3.0.5189-windows-x64\bin\sonar-scanner.bat" `
             -D"sonar.projectKey=Avianca-EMSA" `
             -D"sonar.projectName=Avianca EMSA" `
@@ -55,4 +55,4 @@ jobs:
             -D"sonar.host.url=$env:SONAR_HOST_URL" `
             -D"sonar.token=$env:SONAR_TOKEN" `
             -D"sonar.sourceEncoding=UTF-8"
-          Write-Host "✅ Análisis completado exitosamente."
+          Write-Host "Analisis finalizado correctamente."
