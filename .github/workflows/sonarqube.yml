@@ -8,24 +8,24 @@ on:
 jobs:
   build:
     name: Build and analyze
-    runs-on: self-hosted
+    runs-on: windows-latest  # usamos runner en la nube, evita el error EBUSY
 
     steps:
-      # ✅ Checkout del repositorio SIN limpiar archivos temporales
+      # 🧩 Paso 1: Clonar el repositorio sin limpiar archivos temporales
       - name: Checkout repository safely
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          clean: false  # evita el error EBUSY por bloqueo de carpeta temporal
+          clean: false  # evita el borrado del directorio temporal
 
-      # ✅ Configurar JDK 17
+      # 🧩 Paso 2: Instalar JDK 17
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: 17
           distribution: 'zulu'
 
-      # ✅ Cache de SonarQube
+      # 🧩 Paso 3: Cache de SonarQube
       - name: Cache SonarQube packages
         uses: actions/cache@v4
         with:
@@ -33,7 +33,7 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
-      # ✅ Cache de Maven
+      # 🧩 Paso 4: Cache de Maven
       - name: Cache Maven packages
         uses: actions/cache@v4
         with:
@@ -41,7 +41,7 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      # ✅ Compilación y análisis con SonarQube
+      # 🧩 Paso 5: Compilar y analizar con SonarQube
       - name: Build and analyze with SonarQube
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
